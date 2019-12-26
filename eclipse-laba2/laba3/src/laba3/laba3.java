@@ -1,6 +1,8 @@
 package laba3;
 
 import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -9,20 +11,44 @@ import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
+
 import java.awt.Canvas;
 import java.awt.Color;
 
 import javax.swing.JTable;
 
-
 public class laba3 {
 
 	private JFrame frame;
 	private JTable table;
+	
+	
 	private ArrayList<Otrezok> dict = new ArrayList<Otrezok>();
+
+	Otrezok oblast;
+
+	public class DrawPanel extends JPanel
+	{
+		private void doDrawing(Graphics g)
+		{
+			Graphics2D g2d = (Graphics2D) g;
+			Otrezok k = dict.get(0);
+			g.setColor(Color.black);
+			g2d.drawLine(k.x, k.y, k.x1, k.y1);
+		}
+		
+		@Override
+	    public void paintComponent(Graphics g) {
+	        
+	        super.paintComponent(g);
+	        doDrawing(g);
+	    }
+
+	}
 
 	/**
 	 * Launch the application.
@@ -115,7 +141,7 @@ public class laba3 {
 		btnNewButton_1.setBounds(44, 224, 391, 25);
 		frame.getContentPane().add(btnNewButton_1);
 		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e){
 				deleteLine(textArea, textArea_1, textArea_2, textArea_3, table, dtm);
 			}
 
@@ -164,25 +190,150 @@ public class laba3 {
 		textArea_7.setBounds(132, 435, 66, 32);
 		frame.getContentPane().add(textArea_7);
 		
-		JButton button = new JButton("Установить координаты прямокгольной области");
+		JButton button = new JButton("Установить координаты прямоугольной области");
 		button.setBounds(44, 497, 589, 25);
 		frame.getContentPane().add(button);
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addSquare(textArea_4, textArea_5, textArea_6, textArea_7, table, dtm);
+			}
+
+			
+		});
+		
+		
 		
 		JButton button_1 = new JButton("Отобразить отрезки и прямоугольную область");
 		button_1.setBounds(44, 552, 589, 25);
 		frame.getContentPane().add(button_1);
+		button_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Canvas canvas = new Canvas() {
+					private void doDrawing(Graphics g)
+					{
+						Graphics2D g2d = (Graphics2D) g;
+						Otrezok k = null;
+						g.setColor(Color.black);
+						if (dict != null)
+						{
+							for (int i = 0; i < dict.size(); i++)
+							{
+								k = dict.get(i);
+								g2d.drawLine(k.x, k.y, k.x1, k.y1);
+							}
+						}
+						if (oblast != null)
+						{
+							g2d.drawRect(oblast.x, oblast.y, oblast.x1 - oblast.x, oblast.y1 - oblast.y);
+						}
+					
+					}	
+					@Override
+				    public void paint(Graphics g) {
+				        
+				        super.paint(g);
+				        doDrawing(g);
+					}
+				};
+				canvas.setBackground(Color.pink);
+				canvas.setBounds(44, 590, 600, 240);
+				
+				frame.getContentPane().add(canvas);
+				/*JPanel drawPanel = new DrawPanel();
+				drawPanel.setSize(200, 200);
+				drawPanel.setVisible(true);
+				frame.add(drawPanel);*/
+			}
+		});
 		
-		Canvas canvas = new Canvas();
-		canvas.setBounds(44, 603, 589, 303);
-		frame.getContentPane().add(canvas);
-		
-		JButton button_2 = new JButton("Отобразить координаты отрезков, пересекающих прямоугольную область");
-		button_2.setBounds(44, 929, 637, 25);
-		frame.getContentPane().add(button_2);
 		
 		JTextArea textArea_8 = new JTextArea();
 		textArea_8.setBounds(54, 966, 627, 66);
 		frame.getContentPane().add(textArea_8);
+		
+		JButton button_2 = new JButton("Отобразить координаты отрезков, пересекающих прямоугольную область");
+		button_2.setBounds(44, 929, 637, 25);
+		frame.getContentPane().add(button_2);
+		button_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int xx = 0;
+				int yy = 0;
+				int j = 0;
+				int key = 0;
+				Otrezok tmp = null;
+				textArea_8.setText(null);
+				if (oblast == null)
+					JOptionPane.showMessageDialog(null, "Ошибка: добавьте прямоугольную область", "Ошибка", JOptionPane.INFORMATION_MESSAGE );
+				if (dict == null)
+					JOptionPane.showMessageDialog(null, "Ошибка: добавьте отрезок", "Ошибка", JOptionPane.INFORMATION_MESSAGE );
+				
+				else
+				{
+					for (int i = 0; i < dict.size(); i++)
+					{
+						key = 0;
+						tmp = dict.get(i);
+						System.out.print(tmp.x);
+						for (j = oblast.x; j <= oblast.x1; j++)
+						{
+							xx = j;
+							yy = oblast.y;
+							if (((tmp.y - tmp.y1)*xx + (tmp.x1 - tmp.x)*yy + (tmp.x*tmp.y1 - tmp.x1*tmp.y)) == 0)
+							{
+								
+								textArea_8.append(tmp.x.toString() + ", " + tmp.y.toString() + ", " + tmp.x1.toString() + ", " + tmp.y1.toString() + "\n");
+								key = 1;
+							}
+						}
+						if (key == 1)
+							continue;
+						for (j = oblast.y; j <= oblast.y1; j++)
+						{
+							xx = oblast.x;
+							yy = j;
+							if (((tmp.y - tmp.y1)*xx + (tmp.x1 - tmp.x)*yy + (tmp.x*tmp.y1 - tmp.x1*tmp.y)) == 0)
+							{
+								textArea_8.append(tmp.x.toString() + ", " + tmp.y.toString() + ", " + tmp.x1.toString() + ", " + tmp.y1.toString() + "\n");
+								key = 1;
+							}
+							
+						}
+						if (key == 1)
+							continue;
+						for (j = oblast.y; j <= oblast.y1; j++)
+						{
+							xx = oblast.x1;
+							yy = j;
+							if (((tmp.y - tmp.y1)*xx + (tmp.x1 - tmp.x)*yy + (tmp.x*tmp.y1 - tmp.x1*tmp.y)) == 0)
+							{
+								textArea_8.append(tmp.x.toString() + ", " + tmp.y.toString() + ", " + tmp.x1.toString() + ", " + tmp.y1.toString() + "\n");
+								key = 1;
+							}
+							
+						}
+						if (key == 1)
+							continue;
+						for (j = oblast.x; j <= oblast.x1; j++)
+						{
+							xx = j;
+							yy = oblast.y1;
+							if (((tmp.y - tmp.y1)*xx + (tmp.x1 - tmp.x)*yy + (tmp.x*tmp.y1 - tmp.x1*tmp.y)) == 0)
+							{
+								textArea_8.append(tmp.x.toString() + ", " + tmp.y.toString() + ", " + tmp.x1.toString() + ", " + tmp.y1.toString() + "\n");
+							}			
+						}/*
+						if (tmp.x >= oblast.x && tmp.y >= oblast.y && tmp.x1 <= oblast.x1 && tmp.y1 <= oblast.y1)
+							textArea_8.setText(tmp.x.toString() + ", " + tmp.y.toString() + ", " + tmp.x1.toString() + ", " + tmp.y1.toString() + "\n");
+					*/
+					}
+				}
+			}
+			
+		});
+		
+		
+		
+		
 		
 		
 	}
@@ -195,7 +346,10 @@ public class laba3 {
 			k.y = Integer.parseInt(b.getText().trim());
 			k.x1 = Integer.parseInt(c.getText().trim());
 			k.y1 = Integer.parseInt(d.getText().trim());
+			if (k.x > 600 || k.y > 240 || k.x1 > 600 || k.y1 > 240)
+				throw new Exception();
 			dict.add(k);
+			System.out.print(k.x);
 			Vector <String> v = new Vector<String>();
 			v.add(a.getText().trim());
 			v.add(b.getText().trim());
@@ -209,7 +363,7 @@ public class laba3 {
 		}
 		catch (Exception exc)
 		{
-			JOptionPane.showMessageDialog(null, "Ошибка: неверный формат данных, введите число", "Ошибка", JOptionPane.INFORMATION_MESSAGE );
+			JOptionPane.showMessageDialog(null, "Ошибка: неверный формат данных, введите x от 0 до 600, y от 0 до 240", "Ошибка", JOptionPane.INFORMATION_MESSAGE );
 			a.setText(null);
 			b.setText(null);
 			c.setText(null);
@@ -220,10 +374,10 @@ public class laba3 {
 	private void deleteLine(JTextArea a, JTextArea b, JTextArea c, JTextArea d, JTable table, DefaultTableModel dtm) {
 		try {
 			Otrezok k = new Otrezok();
-				k.x = Integer.parseInt(a.getText().trim());
-				k.y = Integer.parseInt(b.getText().trim());
-				k.x1 = Integer.parseInt(c.getText().trim());
-				k.y1 = Integer.parseInt(d.getText().trim());
+			k.x = Integer.parseInt(a.getText().trim());
+			k.y = Integer.parseInt(b.getText().trim());
+			k.x1 = Integer.parseInt(c.getText().trim());
+			k.y1 = Integer.parseInt(d.getText().trim());
 			
 			a.setText(null);
 			b.setText(null);
@@ -241,6 +395,33 @@ public class laba3 {
 				}
 			}//подумать будет ли удвленный индекс влиять на номер строки
 			
+		}
+		catch (Exception exc)
+		{
+			JOptionPane.showMessageDialog(null, "Ошибка: неверный формат данных, введите число", "Ошибка", JOptionPane.INFORMATION_MESSAGE );
+			a.setText(null);
+			b.setText(null);
+			c.setText(null);
+			d.setText(null);
+		}
+	}
+	
+	private void addSquare(JTextArea a, JTextArea b, JTextArea c, JTextArea d, JTable table, DefaultTableModel dtm) {
+		
+		try {
+			oblast = new Otrezok();
+			oblast.x = Integer.parseInt(a.getText().trim());
+			oblast.y = Integer.parseInt(b.getText().trim());
+			oblast.x1 = Integer.parseInt(c.getText().trim());
+			oblast.y1 = Integer.parseInt(d.getText().trim());
+			System.out.print(oblast.x);
+			if (oblast.x > 600 || oblast.y > 240 || oblast.x1 > 600 || oblast.y1 > 240)
+				throw new Exception();
+			
+			a.setText(null);
+			b.setText(null);
+			c.setText(null);
+			d.setText(null);
 		}
 		catch (Exception exc)
 		{
