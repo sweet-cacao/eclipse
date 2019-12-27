@@ -31,25 +31,6 @@ public class laba3 {
 
 	Otrezok oblast;
 
-	public class DrawPanel extends JPanel
-	{
-		private void doDrawing(Graphics g)
-		{
-			Graphics2D g2d = (Graphics2D) g;
-			Otrezok k = dict.get(0);
-			g.setColor(Color.black);
-			g2d.drawLine(k.x, k.y, k.x1, k.y1);
-		}
-		
-		@Override
-	    public void paintComponent(Graphics g) {
-	        
-	        super.paintComponent(g);
-	        doDrawing(g);
-	    }
-
-	}
-
 	/**
 	 * Launch the application.
 	 */
@@ -216,13 +197,13 @@ public class laba3 {
 						g.setColor(Color.black);
 						if (dict != null)
 						{
-							for (int i = 0; i < dict.size(); i++)
+							for (int i = 0; i < dict.size(); i++)//рисование отрезков
 							{
 								k = dict.get(i);
 								g2d.drawLine(k.x, k.y, k.x1, k.y1);
 							}
 						}
-						if (oblast != null)
+						if (oblast != null)//рисование прямоугольной области
 						{
 							g2d.drawRect(oblast.x, oblast.y, oblast.x1 - oblast.x, oblast.y1 - oblast.y);
 						}
@@ -239,10 +220,6 @@ public class laba3 {
 				canvas.setBounds(44, 590, 600, 240);
 				
 				frame.getContentPane().add(canvas);
-				/*JPanel drawPanel = new DrawPanel();
-				drawPanel.setSize(200, 200);
-				drawPanel.setVisible(true);
-				frame.add(drawPanel);*/
 			}
 		});
 		
@@ -273,12 +250,11 @@ public class laba3 {
 					{
 						key = 0;
 						tmp = dict.get(i);
-						System.out.print(tmp.x);
 						for (j = oblast.x; j <= oblast.x1; j++)
 						{
 							xx = j;
 							yy = oblast.y;
-							if (((tmp.y - tmp.y1)*xx + (tmp.x1 - tmp.x)*yy + (tmp.x*tmp.y1 - tmp.x1*tmp.y)) == 0)
+							if ((((tmp.y - tmp.y1)*xx + (tmp.x1 - tmp.x)*yy + (tmp.x*tmp.y1 - tmp.x1*tmp.y)) == 0) && tmp.y <= oblast.y && tmp.y1 >= oblast.y)//добавить чтобы была не линия а отрезок
 							{
 								
 								textArea_8.append(tmp.x.toString() + ", " + tmp.y.toString() + ", " + tmp.x1.toString() + ", " + tmp.y1.toString() + "\n");
@@ -291,7 +267,7 @@ public class laba3 {
 						{
 							xx = oblast.x;
 							yy = j;
-							if (((tmp.y - tmp.y1)*xx + (tmp.x1 - tmp.x)*yy + (tmp.x*tmp.y1 - tmp.x1*tmp.y)) == 0)
+							if ((((tmp.y - tmp.y1)*xx + (tmp.x1 - tmp.x)*yy + (tmp.x*tmp.y1 - tmp.x1*tmp.y)) == 0) && tmp.x <= oblast.x && tmp.x1 >= oblast.x )
 							{
 								textArea_8.append(tmp.x.toString() + ", " + tmp.y.toString() + ", " + tmp.x1.toString() + ", " + tmp.y1.toString() + "\n");
 								key = 1;
@@ -304,7 +280,7 @@ public class laba3 {
 						{
 							xx = oblast.x1;
 							yy = j;
-							if (((tmp.y - tmp.y1)*xx + (tmp.x1 - tmp.x)*yy + (tmp.x*tmp.y1 - tmp.x1*tmp.y)) == 0)
+							if ((((tmp.y - tmp.y1)*xx + (tmp.x1 - tmp.x)*yy + (tmp.x*tmp.y1 - tmp.x1*tmp.y)) == 0)  && tmp.x <= oblast.x1 && tmp.x1 >= oblast.x1)
 							{
 								textArea_8.append(tmp.x.toString() + ", " + tmp.y.toString() + ", " + tmp.x1.toString() + ", " + tmp.y1.toString() + "\n");
 								key = 1;
@@ -317,26 +293,17 @@ public class laba3 {
 						{
 							xx = j;
 							yy = oblast.y1;
-							if (((tmp.y - tmp.y1)*xx + (tmp.x1 - tmp.x)*yy + (tmp.x*tmp.y1 - tmp.x1*tmp.y)) == 0)
+							if ((((tmp.y - tmp.y1)*xx + (tmp.x1 - tmp.x)*yy + (tmp.x*tmp.y1 - tmp.x1*tmp.y)) == 0) && tmp.y <= oblast.y1 && tmp.y1 >= oblast.y1)
 							{
 								textArea_8.append(tmp.x.toString() + ", " + tmp.y.toString() + ", " + tmp.x1.toString() + ", " + tmp.y1.toString() + "\n");
 							}			
-						}/*
-						if (tmp.x >= oblast.x && tmp.y >= oblast.y && tmp.x1 <= oblast.x1 && tmp.y1 <= oblast.y1)
-							textArea_8.setText(tmp.x.toString() + ", " + tmp.y.toString() + ", " + tmp.x1.toString() + ", " + tmp.y1.toString() + "\n");
-					*/
+						}
 					}
 				}
 			}
 			
 		});
-		
-		
-		
-		
-		
-		
-	}
+	}//для каждого отрезка смотрим пересекается ли он с грянью прямоугольной области
 	
 	private void addLine(JTextArea a, JTextArea b, JTextArea c, JTextArea d, JTable table, DefaultTableModel dtm) {
 		try
@@ -349,7 +316,6 @@ public class laba3 {
 			if (k.x > 600 || k.y > 240 || k.x1 > 600 || k.y1 > 240)
 				throw new Exception();
 			dict.add(k);
-			System.out.print(k.x);
 			Vector <String> v = new Vector<String>();
 			v.add(a.getText().trim());
 			v.add(b.getText().trim());
@@ -369,31 +335,39 @@ public class laba3 {
 			c.setText(null);
 			d.setText(null);
 		}
-	}
+	}//добавление отрезка
 	
 	private void deleteLine(JTextArea a, JTextArea b, JTextArea c, JTextArea d, JTable table, DefaultTableModel dtm) {
 		try {
 			Otrezok k = new Otrezok();
+			Otrezok h;
 			k.x = Integer.parseInt(a.getText().trim());
 			k.y = Integer.parseInt(b.getText().trim());
 			k.x1 = Integer.parseInt(c.getText().trim());
 			k.y1 = Integer.parseInt(d.getText().trim());
-			
 			a.setText(null);
 			b.setText(null);
 			c.setText(null);
 			d.setText(null);
 			for (int i = 0; i < dict.size(); i++)
 			{
-				System.out.print(k.x);
-				if (dict.get(i).equals(k))
+				h = (Otrezok)dict.get(i);
+				System.out.print("x " + h.x);
+				System.out.print("y " + h.y);
+				System.out.print("x1 " + h.x1);
+				System.out.print("y2 " + h.y1 + "\n");
+				System.out.print("delx " + k.x);
+				System.out.print("dely " + k.y);
+				System.out.print("delx1 " + k.x1);
+				System.out.print("dely1 " + k.y1);
+				if (k.x.equals(h.x) && k.y.equals(h.y) && k.x1.equals(h.x1) && k.y1.equals(h.y1))
 				{
 					System.out.print("here");
 					dict.remove(i);
 					dtm.removeRow(i);
 					return;
 				}
-			}//подумать будет ли удвленный индекс влиять на номер строки
+			}//удаление отрезка
 			
 		}
 		catch (Exception exc)
@@ -414,7 +388,6 @@ public class laba3 {
 			oblast.y = Integer.parseInt(b.getText().trim());
 			oblast.x1 = Integer.parseInt(c.getText().trim());
 			oblast.y1 = Integer.parseInt(d.getText().trim());
-			System.out.print(oblast.x);
 			if (oblast.x > 600 || oblast.y > 240 || oblast.x1 > 600 || oblast.y1 > 240)
 				throw new Exception();
 			
@@ -431,5 +404,5 @@ public class laba3 {
 			c.setText(null);
 			d.setText(null);
 		}
-	}
+	}//добавление прямоугольной области
 }

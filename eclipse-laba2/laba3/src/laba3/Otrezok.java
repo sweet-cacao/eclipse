@@ -3,7 +3,7 @@ package laba3;
 public class Otrezok {
 		@Override
 	public int hashCode() {
-		final int prime = 31;
+		final int prime = 1;
 		int result = 1;
 		result = prime * result + ((x == null) ? 0 : x.hashCode());
 		result = prime * result + ((x1 == null) ? 0 : x1.hashCode());
@@ -20,10 +20,11 @@ public class Otrezok {
 		@Override
 		public boolean equals(Object b)
 		{
+			Otrezok a = (Otrezok) b;
 			
 			if (b == null || b.getClass() != this.getClass())
 				return false;
-			Otrezok a = (Otrezok) b;
+			
 			if (a.x == this.x && a.y == this.y && a.x1 == this.x1 && a.y1 == this.y1)
 				return true;
 			else
