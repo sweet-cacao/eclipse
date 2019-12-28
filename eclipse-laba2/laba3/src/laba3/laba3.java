@@ -171,12 +171,16 @@ public class laba3 {
 		textArea_7.setBounds(132, 435, 66, 32);
 		frame.getContentPane().add(textArea_7);
 		
+		JTextArea textArea_9 = new JTextArea();
+		textArea_9.setBounds(406, 284, 239, 153);
+		frame.getContentPane().add(textArea_9);
+		
 		JButton button = new JButton("Установить координаты прямоугольной области");
 		button.setBounds(44, 497, 589, 25);
 		frame.getContentPane().add(button);
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				addSquare(textArea_4, textArea_5, textArea_6, textArea_7, table, dtm);
+				addSquare(textArea_4, textArea_5, textArea_6, textArea_7, table, dtm, textArea_9);
 			}
 
 			
@@ -231,6 +235,8 @@ public class laba3 {
 		JButton button_2 = new JButton("Отобразить координаты отрезков, пересекающих прямоугольную область");
 		button_2.setBounds(44, 929, 637, 25);
 		frame.getContentPane().add(button_2);
+		
+		
 		button_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int xx = 0;
@@ -352,14 +358,6 @@ public class laba3 {
 			for (int i = 0; i < dict.size(); i++)
 			{
 				h = (Otrezok)dict.get(i);
-				System.out.print("x " + h.x);
-				System.out.print("y " + h.y);
-				System.out.print("x1 " + h.x1);
-				System.out.print("y2 " + h.y1 + "\n");
-				System.out.print("delx " + k.x);
-				System.out.print("dely " + k.y);
-				System.out.print("delx1 " + k.x1);
-				System.out.print("dely1 " + k.y1);
 				if (k.x.equals(h.x) && k.y.equals(h.y) && k.x1.equals(h.x1) && k.y1.equals(h.y1))
 				{
 					System.out.print("here");
@@ -380,9 +378,10 @@ public class laba3 {
 		}
 	}
 	
-	private void addSquare(JTextArea a, JTextArea b, JTextArea c, JTextArea d, JTable table, DefaultTableModel dtm) {
+	private void addSquare(JTextArea a, JTextArea b, JTextArea c, JTextArea d, JTable table, DefaultTableModel dtm, JTextArea e) {
 		
 		try {
+			e.setText(null);
 			oblast = new Otrezok();
 			oblast.x = Integer.parseInt(a.getText().trim());
 			oblast.y = Integer.parseInt(b.getText().trim());
@@ -390,7 +389,7 @@ public class laba3 {
 			oblast.y1 = Integer.parseInt(d.getText().trim());
 			if (oblast.x > 600 || oblast.y > 240 || oblast.x1 > 600 || oblast.y1 > 240)
 				throw new Exception();
-			
+			e.append(a.getText().trim() + ", " + b.getText().trim() + ", " + c.getText().trim() + ", " + d.getText().trim());
 			a.setText(null);
 			b.setText(null);
 			c.setText(null);
