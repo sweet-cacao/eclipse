@@ -5,6 +5,10 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +39,10 @@ public class MyFrame extends JFrame {
     private JButton button_4;
     private JLabel label_8;
     private JButton button_5;
+    private DefaultListModel model;
 
+    String[] files = {};
+    JList list;
     Map<Object, Color> color = null;
 
     // Выбранный шрифт.
@@ -70,18 +77,20 @@ public class MyFrame extends JFrame {
         contentPane.setLayout(null);
 
         JTextArea textArea = new JTextArea();
-        textArea.setBounds(635, 23, 452, 150);
-        contentPane.add(textArea);
+        JScrollPane scroll= new JScrollPane();
+        scroll.setBounds(643, 57, 452, 150);
+        scroll.setViewportView(textArea);
+        contentPane.add(scroll);
 
         textField = new JTextField();
         textField.setBounds(236, 23, 164, 46);
-        textField.setText("1");
+
         contentPane.add(textField);
         textField.setColumns(10);
 
         textField_1 = new JTextField();
         textField_1.setColumns(10);
-        textField_1.setText("2");
+
         textField_1.setBounds(38, 23, 164, 46);
         contentPane.add(textField_1);
 
@@ -180,7 +189,7 @@ public class MyFrame extends JFrame {
                 catch(Exception exc)
                 {
                     JOptionPane.showMessageDialog(null, "Введите значение и номер ячейки");
-                    exc.printStackTrace();
+
                 }
             }
         });
@@ -204,13 +213,13 @@ public class MyFrame extends JFrame {
 
         textField_2 = new JTextField();
         textField_2.setColumns(10);
-        textField_2.setText("2");
+
         textField_2.setBounds(42, 453, 164, 46);
         contentPane.add(textField_2);
 
         textField_3 = new JTextField();
         textField_3.setColumns(10);
-        textField_3.setText("3");
+
         textField_3.setBounds(243, 453, 164, 46);
         contentPane.add(textField_3);
 
@@ -224,19 +233,17 @@ public class MyFrame extends JFrame {
 
         textField_4 = new JTextField();
         textField_4.setColumns(10);
-        textField_4.setText("4");
+
         textField_4.setBounds(48, 590, 164, 46);
         contentPane.add(textField_4);
 
         textField_5 = new JTextField();
         textField_5.setColumns(10);
-        textField_5.setText("5");
         textField_5.setBounds(243, 590, 164, 46);
         contentPane.add(textField_5);
 
         textField_6 = new JTextField();
         textField_6.setColumns(10);
-        textField_6.setText("6");
         textField_6.setBounds(434, 590, 164, 46);
         contentPane.add(textField_6);
 
@@ -259,7 +266,7 @@ public class MyFrame extends JFrame {
 //        color = Color.white;
         render=new FontCellRenderer(fontsMap, color);
         comboBox.setRenderer(render);
-        comboBox.setBounds(650, 219, 385, 36);
+        comboBox.setBounds(646, 235, 385, 36);
         contentPane.add(comboBox);
         comboBox.addActionListener(new ActionListener() {
             @Override
@@ -309,7 +316,6 @@ public class MyFrame extends JFrame {
                 catch (Exception exc)
                 {
                     JOptionPane.showMessageDialog(null, "Неверный номер шрифта\nВведите значение от 1 до " + (name_fonts.length -1));
-                    exc.printStackTrace();
                 }
             }
         });
@@ -318,24 +324,88 @@ public class MyFrame extends JFrame {
 
         textField_8 = new JTextField();
         textField_8.setColumns(10);
-        textField_8.setBounds(650, 561, 164, 46);
+        textField_8.setBounds(440, 720, 164, 46);
         contentPane.add(textField_8);
 
         button_4 = new JButton("Отобразить названия файлов из выбранного каталога");
-        button_4.setBounds(650, 628, 466, 36);
+        button_4.setBounds(650, 724, 466, 36);
+        button_4.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    File folder = new File(textField_8.getText());
+                    files = folder.list();
+//                    JList list = new JList(files);
+                    model.clear();
+                    for (String fileName : files) {
+                        model.addElement(fileName);
+//                        System.out.println("File: " + fileName);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    JOptionPane.showMessageDialog(null, "Неверное название каталога");
+                }
+
+            }
+        });
         contentPane.add(button_4);
 
         label_8 = new JLabel("Название каталога");
-        label_8.setBounds(650, 540, 180, 15);
+        label_8.setBounds(284, 735, 180, 15);
         contentPane.add(label_8);
 
         button_5 = new JButton("Загрузить файл");
         button_5.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
+                try {
+                    JFileChooser fileopen = new JFileChooser();
+                    int ret = fileopen.showDialog(null, "Открыть файл");
+                    if (ret == JFileChooser.APPROVE_OPTION) {
+                        File file = fileopen.getSelectedFile();
+                        FileReader reader = null;
+//                        try {
+                            reader = new FileReader(file);
+//                        } catch (FileNotFoundException e) {
+//                        }
+                        int c;
+                        StringBuilder str = new StringBuilder();
+                        while (true) {
+//                            try {
+                                if (!((c = reader.read()) != -1)) break;
+                                else {
+                                    str.append((char) c);
+                                }
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+
+                        }
+                        textArea.setText(str.toString());
+                        textArea.updateUI();
+                        scroll.updateUI();
+                    }
+                }
+                catch (Exception exc)
+                {
+                    exc.printStackTrace();
+                }
             }
         });
-        button_5.setBounds(650, 694, 466, 36);
+        button_5.setBounds(798, 12, 154, 36);;
         contentPane.add(button_5);
+
+        JScrollPane scrollPane_1 = new JScrollPane();
+        scrollPane_1.setBounds(650, 540, 466, 172);
+        contentPane.add(scrollPane_1);
+
+
+        model = new DefaultListModel();
+        list = new JList(model);
+        scrollPane_1.setViewportView(list);
+        JSeparator separator = new JSeparator();
+        separator.setBounds(38, 703, 566, 8);
+        contentPane.add(separator);
     }
 
     public void Remap(){
